@@ -27,7 +27,7 @@
         />
 
   </android.support.v7.widget.Toolbar>
-    <com.hyphenate.easeui.widget.EaseConversationList
+    <cn.ucai.live.widget.EaseConversationList
         android:layout_marginTop="1dp"
         android:id="@+id/conversation_list"
         android:layout_width="match_parent"

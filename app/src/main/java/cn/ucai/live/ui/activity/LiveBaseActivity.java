@@ -1,4 +1,4 @@
-package cn.ucai.live.ui.activity;
+package com.easemob.livedemo.ui.activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +11,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.bumptech.glide.Glide;
+import com.easemob.livedemo.DemoConstants;
+import com.easemob.livedemo.R;
+import com.easemob.livedemo.ThreadPoolManager;
+import com.easemob.livedemo.data.TestAvatarRepository;
+import com.easemob.livedemo.data.model.LiveRoom;
+import com.easemob.livedemo.data.restapi.ApiManager;
+import com.easemob.livedemo.data.restapi.LiveException;
+import com.easemob.livedemo.data.restapi.model.StatisticsType;
+import com.easemob.livedemo.ui.widget.PeriscopeLayout;
+import com.easemob.livedemo.ui.widget.RoomMessagesView;
+import com.easemob.livedemo.utils.Utils;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMChatRoomChangeListener;
 import com.hyphenate.EMMessageListener;
@@ -23,25 +36,8 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import cn.ucai.live.LiveConstants;
-import cn.ucai.live.R;
-import cn.ucai.live.ThreadPoolManager;
-import cn.ucai.live.data.TestAvatarRepository;
-import cn.ucai.live.data.model.LiveRoom;
-import cn.ucai.live.data.restapi.ApiManager;
-import cn.ucai.live.data.restapi.LiveException;
-import cn.ucai.live.data.restapi.model.StatisticsType;
-import cn.ucai.live.ui.widget.PeriscopeLayout;
-import cn.ucai.live.ui.widget.RoomMessagesView;
-import cn.ucai.live.utils.Utils;
 
 /**
  * Created by wei on 2016/6/12.
@@ -51,10 +47,8 @@ public abstract class LiveBaseActivity extends BaseActivity {
 
     //@BindView(R.id.left_gift_view1) LiveLeftGiftView leftGiftView;
     //@BindView(R.id.left_gift_view2) LiveLeftGiftView leftGiftView2;
-    @BindView(R.id.message_view)
-    RoomMessagesView messageView;
-    @BindView(R.id.periscope_layout)
-    PeriscopeLayout periscopeLayout;
+    @BindView(R.id.message_view) RoomMessagesView messageView;
+    @BindView(R.id.periscope_layout) PeriscopeLayout periscopeLayout;
     @BindView(R.id.bottom_bar) View bottomBar;
 
     //@BindView(R.id.barrage_layout) BarrageLayout barrageLayout;
@@ -255,10 +249,10 @@ public abstract class LiveBaseActivity extends BaseActivity {
 
         @Override public void onCmdMessageReceived(List<EMMessage> messages) {
             EMMessage message = messages.get(messages.size() - 1);
-            if (LiveConstants.CMD_GIFT.equals(((EMCmdMessageBody) message.getBody()).action())) {
+            if (DemoConstants.CMD_GIFT.equals(((EMCmdMessageBody) message.getBody()).action())) {
                 //showLeftGiftView(message.getFrom());
-            } else if(LiveConstants.CMD_PRAISE.equals(((EMCmdMessageBody) message.getBody()).action())) {
-                showPraise(message.getIntAttribute(LiveConstants.EXTRA_PRAISE_COUNT, 1));
+            } else if(DemoConstants.CMD_PRAISE.equals(((EMCmdMessageBody) message.getBody()).action())) {
+                showPraise(message.getIntAttribute(DemoConstants.EXTRA_PRAISE_COUNT, 1));
             }
         }
 
@@ -349,6 +343,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
     }
 
     private void showUserDetailsDialog(String username) {
+        EMChatRoom chatRoom = EMClient.getInstance().chatroomManager().getChatRoom(chatroomId);
         RoomUserDetailsDialog dialog = RoomUserDetailsDialog.newInstance(username, liveRoom);
         dialog.setManageEventListener(new RoomUserDetailsDialog.RoomManageEventListener() {
             @Override public void onKickMember(String username) {
@@ -374,10 +369,10 @@ public abstract class LiveBaseActivity extends BaseActivity {
         }, 200);
     }
 
-    private LinearLayoutManager layoutManager;
     void showMemberList() {
-        layoutManager = new LinearLayoutManager(LiveBaseActivity.this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(LiveBaseActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        layoutManager.setStackFromEnd(true);
         horizontalRecyclerView.setLayoutManager(layoutManager);
         horizontalRecyclerView.setAdapter(new AvatarAdapter(LiveBaseActivity.this, memberList));
         executeTask(new ThreadPoolManager.Task<Void>() {
@@ -387,16 +382,12 @@ public abstract class LiveBaseActivity extends BaseActivity {
                             .chatroomManager()
                             .fetchChatRoomFromServer(chatroomId, true);
                     memberList.clear();
-                    List<String> tempList = new ArrayList<>();
-                    tempList.addAll(chatroom.getAdminList());
-                    tempList.addAll(chatroom.getMemberList());
-                    if (tempList.contains(chatroom.getOwner())) {
-                        tempList.remove(chatroom.getOwner());
-                    }
-                    if(tempList.size() > MAX_SIZE) {
-                        for (int i = 0; i < MAX_SIZE; i++){
-                            memberList.add(i, tempList.get(i));
-                        }
+                    List<String> ll = chatroom.getAdminList();
+                    List<String> ll2 = chatroom.getMemberList();
+                    memberList.addAll(chatroom.getAdminList());
+                    memberList.addAll(chatroom.getMemberList());
+                    if (memberList.contains(chatroom.getOwner())) {
+                        memberList.remove(chatroom.getOwner());
                     }
                 } catch (HyphenateException e) {
                     e.printStackTrace();
@@ -410,7 +401,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
                 membersCount = size;
                 //观看人数不包含主播
                 watchedCount = membersCount -1;
-                notifyDataSetChanged();
+                horizontalRecyclerView.getAdapter().notifyDataSetChanged();
             }
 
             @Override public void onError(HyphenateException exception) {
@@ -423,7 +414,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
         watchedCount++;
         if (!memberList.contains(name)) {
             membersCount++;
-            if(memberList.size() >= MAX_SIZE)
+            if(memberList.size() == MAX_SIZE)
                 memberList.removeLast();
             memberList.addFirst(name);
             showMemberChangeEvent(name, "来了");
@@ -431,20 +422,11 @@ public abstract class LiveBaseActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override public void run() {
                     audienceNumView.setText(String.valueOf(membersCount));
-                    notifyDataSetChanged();
+                    horizontalRecyclerView.getAdapter().notifyDataSetChanged();
                 }
             });
         }
 
-    }
-
-    private void notifyDataSetChanged(){
-        if(memberList.size() > 4){
-            layoutManager.setStackFromEnd(false);
-        }else{
-            layoutManager.setStackFromEnd(true);
-        }
-        horizontalRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     private synchronized void onRoomMemberExited(final String name) {

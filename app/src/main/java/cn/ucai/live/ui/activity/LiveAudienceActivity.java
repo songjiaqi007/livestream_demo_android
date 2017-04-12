@@ -1,6 +1,5 @@
 package cn.ucai.live.ui.activity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.easemob.livedemo.R;
 import com.hyphenate.EMError;
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMChatRoom;
@@ -30,7 +28,8 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.ucai.live.DemoConstants;
+import cn.ucai.live.LiveConstants;
+import cn.ucai.live.R;
 import cn.ucai.live.ThreadPoolManager;
 import cn.ucai.live.data.restapi.ApiManager;
 import cn.ucai.live.data.restapi.LiveException;
@@ -147,10 +146,10 @@ public class LiveAudienceActivity extends LiveBaseActivity implements UPlayerSta
         mVideoView.setOnPlayerStateListener(this);//set before setVideoPath
         mVideoView.setVideoPath(liveRoom.getLivePullUrl());
 
-        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         //if(getWindow().getAttributes().softInputMode == WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE){
-            messageView.getInputView().requestFocus();
-            messageView.getInputView().requestFocusFromTouch();
+        messageView.getInputView().requestFocus();
+        messageView.getInputView().requestFocusFromTouch();
         //}
     }
 
@@ -286,10 +285,10 @@ public class LiveAudienceActivity extends LiveBaseActivity implements UPlayerSta
     private void sendPraiseMessage(int praiseCount) {
         EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CMD);
         message.setTo(chatroomId);
-        EMCmdMessageBody cmdMessageBody = new EMCmdMessageBody(DemoConstants.CMD_PRAISE);
+        EMCmdMessageBody cmdMessageBody = new EMCmdMessageBody(LiveConstants.CMD_PRAISE);
         message.addBody(cmdMessageBody);
         message.setChatType(EMMessage.ChatType.ChatRoom);
-        message.setAttribute(DemoConstants.EXTRA_PRAISE_COUNT, praiseCount);
+        message.setAttribute(LiveConstants.EXTRA_PRAISE_COUNT, praiseCount);
         EMClient.getInstance().chatManager().sendMessage(message);
     }
 

@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
 
-import cn.ucai.live.DemoApplication;
+import cn.ucai.live.LiveApplication;
 import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.data.restapi.model.LiveStatusModule;
 import cn.ucai.live.data.restapi.model.ResponseModule;
@@ -32,14 +32,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiManager {
     private String appkey;
-    private cn.ucai.live.data.restapi.ApiService apiService;
+    private ApiService apiService;
 
     private static  ApiManager instance;
 
     private ApiManager(){
         try {
-            ApplicationInfo appInfo = DemoApplication.getInstance().getPackageManager().getApplicationInfo(
-                    DemoApplication.getInstance().getPackageName(), PackageManager.GET_META_DATA);
+            ApplicationInfo appInfo = LiveApplication.getInstance().getPackageManager().getApplicationInfo(
+                    LiveApplication.getInstance().getPackageName(), PackageManager.GET_META_DATA);
             appkey = appInfo.metaData.getString("EASEMOB_APPKEY");
             appkey = appkey.replace("#","/");
         } catch (PackageManager.NameNotFoundException e) {
@@ -59,7 +59,7 @@ public class ApiManager {
                 .client(httpClient)
                 .build();
 
-        apiService = retrofit.create(cn.ucai.live.data.restapi.ApiService.class);
+        apiService = retrofit.create(ApiService.class);
 
     }
 
@@ -87,15 +87,15 @@ public class ApiManager {
     }
 
 
-    public LiveRoom createLiveRoom(String name, String description, String coverUrl) throws cn.ucai.live.data.restapi.LiveException {
+    public LiveRoom createLiveRoom(String name, String description, String coverUrl) throws LiveException {
         return createLiveRoomWithRequest(name, description, coverUrl, null);
     }
 
-    public LiveRoom createLiveRoom(String name, String description, String coverUrl, String liveRoomId) throws cn.ucai.live.data.restapi.LiveException {
+    public LiveRoom createLiveRoom(String name, String description, String coverUrl, String liveRoomId) throws LiveException {
         return createLiveRoomWithRequest(name, description, coverUrl, liveRoomId);
     }
 
-    private LiveRoom createLiveRoomWithRequest(String name, String description, String coverUrl, String liveRoomId) throws cn.ucai.live.data.restapi.LiveException {
+    private LiveRoom createLiveRoomWithRequest(String name, String description, String coverUrl, String liveRoomId) throws LiveException {
         LiveRoom liveRoom = new LiveRoom();
         liveRoom.setName(name);
         liveRoom.setDescription(description);
@@ -123,7 +123,7 @@ public class ApiManager {
         return liveRoom;
     }
 
-    public void updateLiveRoomCover(String roomId, String coverUrl) throws cn.ucai.live.data.restapi.LiveException {
+    public void updateLiveRoomCover(String roomId, String coverUrl) throws LiveException {
         JSONObject jobj = new JSONObject();
         JSONObject picObj = new JSONObject();
         try {
@@ -157,12 +157,12 @@ public class ApiManager {
     //    handleResponseCall(respCall);
     //}
 
-    public LiveStatusModule.LiveStatus getLiveRoomStatus(String roomId) throws cn.ucai.live.data.restapi.LiveException {
+    public LiveStatusModule.LiveStatus getLiveRoomStatus(String roomId) throws LiveException {
         Call<ResponseModule<LiveStatusModule>> respCall = apiService.getStatus(roomId);
         return handleResponseCall(respCall).body().data.status;
     }
 
-    public void terminateLiveRoom(String roomId) throws cn.ucai.live.data.restapi.LiveException {
+    public void terminateLiveRoom(String roomId) throws LiveException {
         LiveStatusModule module = new LiveStatusModule();
         module.status = LiveStatusModule.LiveStatus.completed;
         handleResponseCall(apiService.updateStatus(roomId, module));
@@ -173,14 +173,14 @@ public class ApiManager {
     //    handleResponseCall(respCall);
     //}
 
-    public List<LiveRoom> getLiveRoomList(int pageNum, int pageSize) throws cn.ucai.live.data.restapi.LiveException {
+    public List<LiveRoom> getLiveRoomList(int pageNum, int pageSize) throws LiveException {
         Call<ResponseModule<List<LiveRoom>>> respCall = apiService.getLiveRoomList(pageNum, pageSize);
 
         ResponseModule<List<LiveRoom>> response = handleResponseCall(respCall).body();
         return response.data;
     }
 
-    public ResponseModule<List<LiveRoom>> getLivingRoomList(int limit, String cursor) throws cn.ucai.live.data.restapi.LiveException {
+    public ResponseModule<List<LiveRoom>> getLivingRoomList(int limit, String cursor) throws LiveException {
         Call<ResponseModule<List<LiveRoom>>> respCall = apiService.getLivingRoomList(limit, cursor);
 
         ResponseModule<List<LiveRoom>> response = handleResponseCall(respCall).body();
@@ -188,11 +188,11 @@ public class ApiManager {
         return response;
     }
 
-    public LiveRoom getLiveRoomDetails(String roomId) throws cn.ucai.live.data.restapi.LiveException {
+    public LiveRoom getLiveRoomDetails(String roomId) throws LiveException {
         return handleResponseCall(apiService.getLiveRoomDetails(roomId)).body().data;
     }
 
-    public List<String> getAssociatedRooms(String userId) throws cn.ucai.live.data.restapi.LiveException {
+    public List<String> getAssociatedRooms(String userId) throws LiveException {
         ResponseModule<List<String>> response = handleResponseCall(apiService.getAssociatedRoom(userId)).body();
         return response.data;
     }
@@ -219,7 +219,7 @@ public class ApiManager {
     //    handleResponseCall(apiService.kickMember(roomId, memberId));
     //}
 
-    public void postStatistics(StatisticsType type, String roomId, int count) throws cn.ucai.live.data.restapi.LiveException {
+    public void postStatistics(StatisticsType type, String roomId, int count) throws LiveException {
         JSONObject jobj = new JSONObject();
         try {
             jobj.put("type", type);
@@ -230,7 +230,7 @@ public class ApiManager {
         handleResponseCall(apiService.postStatistics(roomId, jsonToRequestBody(jobj.toString())));
     }
 
-    public void postStatistics(StatisticsType type, String roomId, String username) throws cn.ucai.live.data.restapi.LiveException {
+    public void postStatistics(StatisticsType type, String roomId, String username) throws LiveException {
         JSONObject jobj = new JSONObject();
         try {
             jobj.put("type", type);
@@ -241,15 +241,15 @@ public class ApiManager {
         handleResponseCall(apiService.postStatistics(roomId, jsonToRequestBody(jobj.toString())));
     }
 
-    private <T> Response<T>handleResponseCall(Call<T> responseCall) throws cn.ucai.live.data.restapi.LiveException {
+    private <T> Response<T>handleResponseCall(Call<T> responseCall) throws LiveException{
         try {
             Response<T> response = responseCall.execute();
             if(!response.isSuccessful()){
-                throw new cn.ucai.live.data.restapi.LiveException(response.code(), response.errorBody().string());
+                throw new LiveException(response.code(), response.errorBody().string());
             }
             return response;
         } catch (IOException e) {
-            throw new cn.ucai.live.data.restapi.LiveException(e.getMessage());
+            throw new LiveException(e.getMessage());
         }
     }
 

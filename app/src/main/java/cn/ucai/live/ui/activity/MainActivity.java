@@ -11,6 +11,7 @@ import com.hyphenate.chat.EMClient;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.ucai.live.LiveHelper;
 import cn.ucai.live.R;
 
 public class MainActivity extends BaseActivity {
@@ -38,7 +39,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @OnClick(R.id.txt_logout) void logout() {
-        EMClient.getInstance().logout(false, new EMCallBack() {
+        LiveHelper.getInstance().logout(false,new EMCallBack() {
             @Override public void onSuccess() {
                 finish();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));

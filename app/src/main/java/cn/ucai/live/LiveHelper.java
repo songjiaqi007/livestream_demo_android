@@ -76,8 +76,6 @@ public class LiveHelper {
             PreferenceManager.init(context);
             //initialize profile manager
             getUserProfileManager().init(context);
-
-
             setGlobalListeners();
             broadcastManager = LocalBroadcastManager.getInstance(appContext);
         }

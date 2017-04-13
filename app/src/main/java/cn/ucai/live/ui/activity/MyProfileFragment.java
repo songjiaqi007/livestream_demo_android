@@ -8,13 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import com.easemob.livedemo.R;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
+import cn.ucai.live.R;
 
 public class MyProfileFragment extends Fragment {
     Unbinder unbinder;

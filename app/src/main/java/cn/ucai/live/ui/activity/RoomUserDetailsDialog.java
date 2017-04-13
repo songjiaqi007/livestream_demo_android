@@ -14,18 +14,21 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.hyphenate.EMValueCallBack;
+import com.hyphenate.chat.EMChatRoom;
+import com.hyphenate.chat.EMClient;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import com.easemob.livedemo.R;
+import cn.ucai.live.R;
 import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.utils.Utils;
-import com.hyphenate.EMValueCallBack;
-import com.hyphenate.chat.EMChatRoom;
-import com.hyphenate.chat.EMClient;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by wei on 2016/7/25.

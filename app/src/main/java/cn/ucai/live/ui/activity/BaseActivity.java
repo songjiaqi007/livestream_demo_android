@@ -7,7 +7,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import com.easemob.livedemo.R;
+
+import cn.ucai.live.R;
 import cn.ucai.live.ThreadPoolManager;
 import cn.ucai.live.utils.Utils;
 

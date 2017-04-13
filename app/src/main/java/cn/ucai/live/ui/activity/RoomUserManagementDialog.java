@@ -13,7 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import com.easemob.livedemo.R;
+
+import cn.ucai.live.R;
 
 /**
  * Created by wei on 2017/3/3.

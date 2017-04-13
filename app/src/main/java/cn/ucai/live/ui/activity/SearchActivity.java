@@ -9,18 +9,18 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import cn.ucai.live.ThreadPoolManager;
-import cn.ucai.live.data.restapi.ApiManager;
-
-import com.easemob.livedemo.R;
-
-import cn.ucai.live.data.model.LiveRoom;
 
 import com.hyphenate.exceptions.HyphenateException;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import cn.ucai.live.R;
+import cn.ucai.live.ThreadPoolManager;
+import cn.ucai.live.data.model.LiveRoom;
+import cn.ucai.live.data.restapi.ApiManager;
 
 public class SearchActivity extends BaseActivity {
 

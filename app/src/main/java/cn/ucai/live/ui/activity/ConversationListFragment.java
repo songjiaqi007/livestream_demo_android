@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
-import com.easemob.livedemo.R;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
@@ -31,6 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import cn.ucai.live.R;
 
 /**
  * Created by wei on 2016/7/21.
@@ -40,8 +40,7 @@ public class ConversationListFragment extends Fragment implements EMMessageListe
   private static final String ARG_ANCHOOR = "anchorId";
   private static final String ARG_IS_NORMAL = "isNormalStyle";
 
-  @BindView(R.id.conversation_list)
-  EaseConversationList conversationListView;
+  @BindView(R.id.conversation_list) EaseConversationList conversationListView;
   @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.title) TextView titleView;
 
@@ -70,7 +69,7 @@ public class ConversationListFragment extends Fragment implements EMMessageListe
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
+                           @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
     unbinder = ButterKnife.bind(this, view);
     return view;
@@ -106,7 +105,7 @@ public class ConversationListFragment extends Fragment implements EMMessageListe
   }
 
   @OnClick(R.id.close) void close(){
-      getActivity().getSupportFragmentManager().beginTransaction().detach(this).commit();
+    getActivity().getSupportFragmentManager().beginTransaction().detach(this).commit();
   }
 
   @Override
@@ -200,7 +199,7 @@ public class ConversationListFragment extends Fragment implements EMMessageListe
 
   private void addAnchorToConversation(Map<String, EMConversation> conversations) {
     final EMConversation conversation = EMClient.getInstance().chatManager().getConversation(anchorId,
-        EMConversation.EMConversationType.Chat, true);
+            EMConversation.EMConversationType.Chat, true);
   }
 
   /**

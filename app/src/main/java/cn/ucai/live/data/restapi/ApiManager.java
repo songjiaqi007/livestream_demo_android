@@ -19,6 +19,7 @@ import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.data.restapi.model.LiveStatusModule;
 import cn.ucai.live.data.restapi.model.ResponseModule;
 import cn.ucai.live.data.restapi.model.StatisticsType;
+import cn.ucai.live.utils.L;
 import cn.ucai.live.utils.Result;
 import cn.ucai.live.utils.ResultUtils;
 import okhttp3.Interceptor;
@@ -137,6 +138,16 @@ public class ApiManager {
             return result.getRetData();
         }
         return null;
+    }
+
+    public void createLiveRoom(String auth,String name,String description,String owner,int maxusers,
+                               String members){
+        Call<String> call = liveService.createLiveRoom(auth, name, description, owner, maxusers, members);
+    }
+
+    public void createLiveRoom(String name,String description){
+        createLiveRoom("1IFgE",name,description,EMClient.getInstance().getCurrentUser(),300,
+                EMClient.getInstance().getCurrentUser());
     }
 
 
@@ -323,7 +334,9 @@ public class ApiManager {
 
     private <T> Response<T>handleResponseCall(Call<T> responseCall) throws LiveException{
         try {
+            L.e(TAG,"handleResponseCall,responseCall="+responseCall.toString());
             Response<T> response = responseCall.execute();
+            L.e(TAG,"handleResponseCall,response="+response.toString());
             if(!response.isSuccessful()){
                 throw new LiveException(response.code(), response.errorBody().string());
             }

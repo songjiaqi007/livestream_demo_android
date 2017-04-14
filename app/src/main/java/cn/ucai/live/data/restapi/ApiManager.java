@@ -4,6 +4,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.domain.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,6 +124,18 @@ public class ApiManager {
                 L.e(TAG,"onFailure="+t.toString());
             }
         });
+    }
+
+    public User loadUserInfo(String username) throws IOException {
+        User user = null;
+        Call<String> call = liveService.loadUserInfo(username);
+        Response<String> response = call.execute();
+        String body = response.body();
+        Result result = ResultUtils.getResultFromJson(body, User.class);
+        if (result!=null && result.isRetMsg()){
+            user = (User) result.getRetData();
+        }
+        return user;
     }
 
 

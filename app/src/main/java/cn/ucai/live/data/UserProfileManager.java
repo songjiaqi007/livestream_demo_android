@@ -7,11 +7,13 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.domain.User;
 
 import java.io.File;
+import java.io.IOException;
 
 import cn.ucai.live.I;
 import cn.ucai.live.data.model.IUserModel;
 import cn.ucai.live.data.model.OnCompleteListener;
 import cn.ucai.live.data.model.UserModel;
+import cn.ucai.live.data.restapi.ApiManager;
 import cn.ucai.live.utils.L;
 import cn.ucai.live.utils.PreferenceManager;
 import cn.ucai.live.utils.Result;
@@ -55,9 +57,9 @@ public class UserProfileManager {
     }
 
 
-    public synchronized User getCurrentAppUserInfo() {
-        L.e(TAG, "getCurrentAppUserInfo,currentAppUser=" + currentAppUser);
-        if (currentAppUser == null || currentAppUser.getMUserName() == null) {
+    public synchronized User getCurrentAppUserInfo(){
+        L.e(TAG,"getCurrentAppUserInfo,currentAppUser="+currentAppUser);
+        if (currentAppUser == null || currentAppUser.getMUserName()==null){
             String username = EMClient.getInstance().getCurrentUser();
             currentAppUser = new User(username);
             String nick = getCurrentUserNick();
@@ -73,24 +75,24 @@ public class UserProfileManager {
                     @Override
                     public void onSuccess(String s) {
                         boolean updatenick = false;
-                        if (s != null) {
+                        if (s!=null){
                             Result result = ResultUtils.getResultFromJson(s, User.class);
-                            if (result != null && result.isRetMsg()) {
+                            if (result!=null && result.isRetMsg()){
                                 User user = (User) result.getRetData();
-                                if (user != null) {
+                                if (user!=null){
                                     updatenick = true;
                                     setCurrentAppUserNick(user.getMUserNick());
                                 }
                             }
                         }
                         appContext.sendBroadcast(new Intent(I.REQUEST_UPDATE_USER_NICK)
-                                .putExtra(I.User.NICK, updatenick));
+                                .putExtra(I.User.NICK,updatenick));
                     }
 
                     @Override
                     public void onError(String error) {
                         appContext.sendBroadcast(new Intent(I.REQUEST_UPDATE_USER_NICK)
-                                .putExtra(I.User.NICK, false));
+                                .putExtra(I.User.NICK,false));
                     }
                 });
         return false;
@@ -102,24 +104,24 @@ public class UserProfileManager {
                     @Override
                     public void onSuccess(String s) {
                         boolean success = false;
-                        if (s != null) {
+                        if (s!=null){
                             Result result = ResultUtils.getResultFromJson(s, User.class);
-                            if (result != null && result.isRetMsg()) {
+                            if (result!=null && result.isRetMsg()){
                                 User user = (User) result.getRetData();
-                                if (user != null) {
+                                if (user!=null){
                                     success = true;
                                     setCurrentAppUserAvatar(user.getAvatar());
                                 }
                             }
                         }
                         appContext.sendBroadcast(new Intent(I.REQUEST_UPDATE_AVATAR)
-                                .putExtra(I.Avatar.UPDATE_TIME, success));
+                                .putExtra(I.Avatar.UPDATE_TIME,success));
                     }
 
                     @Override
                     public void onError(String error) {
                         appContext.sendBroadcast(new Intent(I.REQUEST_UPDATE_AVATAR)
-                                .putExtra(I.Avatar.UPDATE_TIME, false));
+                                .putExtra(I.Avatar.UPDATE_TIME,false));
                     }
                 });
 //		String avatarUrl = ParseManager.getInstance().uploadParseAvatar(data);
@@ -129,44 +131,58 @@ public class UserProfileManager {
 //		return avatarUrl;
     }
 
-    public void updateCurrentAppUserInfo(User user) {
+    public void updateCurrentAppUserInfo(User user){
         currentAppUser = user;
         setCurrentAppUserNick(user.getMUserNick());
         setCurrentAppUserAvatar(user.getAvatar());
     }
 
     public void asyncGetCurrentAppUserInfo() {
-        userModel.loadUserInfo(appContext, EMClient.getInstance().getCurrentUser(),
-                new OnCompleteListener<String>() {
-                    @Override
-                    public void onSuccess(String s) {
-                        if (s != null) {
-                            Result result = ResultUtils.getResultFromJson(s, User.class);
-                            if (result != null && result.isRetMsg()) {
-                                User user = (User) result.getRetData();
-//								L.e(TAG,"asyncGetCurrentAppUserInfo,user="+user);
-                                if (user != null) {
-                                    updateCurrentAppUserInfo(user);
-                                }
-                            }
-                        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    User user = ApiManager.get().loadUserInfo(EMClient.getInstance().getCurrentUser());
+                    if (user!=null){
+                        updateCurrentAppUserInfo(user);
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                });
+//		userModel.loadUserInfo(appContext, EMClient.getInstance().getCurrentUser(),
+//				new OnCompleteListener<String>() {
+//					@Override
+//					public void onSuccess(String s) {
+//						if (s!=null){
+//							Result result = ResultUtils.getResultFromJson(s, User.class);
+//							if (result!=null && result.isRetMsg()){
+//								User user = (User) result.getRetData();
+////								L.e(TAG,"asyncGetCurrentAppUserInfo,user="+user);
+//								if (user!=null){
+//									updateCurrentAppUserInfo(user);
+//								}
+//							}
+//						}
+//					}
+//
+//					@Override
+//					public void onError(String error) {
+//
+//					}
+//				});
     }
 
 
-    private void setCurrentAppUserNick(String nickname) {
+    private void setCurrentAppUserNick(String nickname){
         getCurrentAppUserInfo().setMUserNick(nickname);
         PreferenceManager.getInstance().setCurrentUserNick(nickname);
     }
 
-    private void setCurrentAppUserAvatar(String avatar) {
-        L.e(TAG, "setCurrentAppUserAvatar,avatar=" + avatar);
+    private void setCurrentAppUserAvatar(String avatar){
+        L.e(TAG,"setCurrentAppUserAvatar,avatar="+avatar);
         getCurrentAppUserInfo().setAvatar(avatar);
         PreferenceManager.getInstance().setCurrentUserAvatar(avatar);
     }

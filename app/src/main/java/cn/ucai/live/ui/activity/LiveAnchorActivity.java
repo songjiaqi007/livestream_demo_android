@@ -17,6 +17,8 @@ import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.controller.EaseUI;
+import com.hyphenate.easeui.utils.EaseUserUtils;
+import com.hyphenate.easeui.widget.EaseImageView;
 import com.ucloud.ulive.UFilterProfile;
 import com.ucloud.ulive.UNetworkListener;
 import com.ucloud.ulive.UStreamStateListener;
@@ -35,11 +37,15 @@ public class LiveAnchorActivity extends LiveBaseActivity {
     private static final String TAG = LiveAnchorActivity.class.getSimpleName();
     @BindView(R.id.container)
     LiveCameraView cameraView;
-    @BindView(R.id.countdown_txtv) TextView countdownView;
-    @BindView(R.id.finish_frame) ViewStub liveEndLayout;
-    @BindView(R.id.cover_image) ImageView coverImage;
+    @BindView(R.id.countdown_txtv)
+    TextView countdownView;
+    @BindView(R.id.finish_frame)
+    ViewStub liveEndLayout;
+    @BindView(R.id.cover_image)
+    ImageView coverImage;
 
-    @BindView(R.id.live_container) RelativeLayout liveContainer;
+    @BindView(R.id.live_container)
+    RelativeLayout liveContainer;
     //@BindView(R.id.img_bt_switch_light) ImageButton lightSwitch;
     //@BindView(R.id.img_bt_switch_voice) ImageButton voiceSwitch;
 
@@ -57,11 +63,16 @@ public class LiveAnchorActivity extends LiveBaseActivity {
     //UEasyStreaming.UEncodingType encodingType;
 
     boolean isStarted;
+    @BindView(R.id.iv_anchor_avatar)
+    EaseImageView mIvAnchorAvatar;
+    @BindView(R.id.tv_username)
+    TextView mTvUsername;
 
     private AVOption mAVOption;
 
     private Handler handler = new Handler() {
-        @Override public void handleMessage(Message msg) {
+        @Override
+        public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_UPDATE_COUNTDOWN:
                     handleUpdateCountdown(msg.arg1);
@@ -71,12 +82,19 @@ public class LiveAnchorActivity extends LiveBaseActivity {
     };
 
     //203138620012364216
-    @Override protected void onActivityCreate(@Nullable Bundle savedInstanceState) {
+    @Override
+    protected void onActivityCreate(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_live_anchor);
         ButterKnife.bind(this);
         initLiveEnv();
-
+        initAnchor();
         startLive();
+    }
+
+    private void initAnchor() {
+
+        EaseUserUtils.setAppUserNick(EMClient.getInstance().getCurrentUser(),mTvUsername);
+        EaseUserUtils.setAppUserAvatar(LiveAnchorActivity.this,EMClient.getInstance().getCurrentUser(),mIvAnchorAvatar);
     }
 
     public void initLiveEnv() {
@@ -98,7 +116,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
         cameraView.stopRecordingAndDismissPreview();
     }
 
-    @Override public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
         //mEasyStreaming.();
         stopPreview();
         super.onBackPressed();
@@ -107,7 +126,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
     /**
      * 切换摄像头
      */
-    @OnClick(R.id.switch_camera_image) void switchCamera() {
+    @OnClick(R.id.switch_camera_image)
+    void switchCamera() {
         //mEasyStreaming.switchCamera();
         cameraView.switchCamera();
     }
@@ -115,7 +135,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
     /**
      * 关闭直播显示直播成果
      */
-    @OnClick(R.id.img_bt_close) void closeLive() {
+    @OnClick(R.id.img_bt_close)
+    void closeLive() {
         //mEasyStreaming.stopRecording();
         cameraView.onPause();
         stopPreview();
@@ -168,7 +189,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
         watchedCountView.setText(watchedCount + "人看过");
 
         liveContinueBtn.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 liveEndView.setVisibility(View.GONE);
                 liveContainer.setVisibility(View.VISIBLE);
                 startPreview();
@@ -178,7 +200,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
             }
         });
         closeConfirmView.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 finish();
             }
         });
@@ -194,10 +217,12 @@ public class LiveAnchorActivity extends LiveBaseActivity {
             scaleAnimation.setDuration(COUNTDOWN_DELAY);
             scaleAnimation.setFillAfter(false);
             scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
-                @Override public void onAnimationStart(Animation animation) {
+                @Override
+                public void onAnimationStart(Animation animation) {
                 }
 
-                @Override public void onAnimationEnd(Animation animation) {
+                @Override
+                public void onAnimationEnd(Animation animation) {
                     countdownView.setVisibility(View.GONE);
 
                     if (count == COUNTDOWN_END_INDEX
@@ -206,13 +231,15 @@ public class LiveAnchorActivity extends LiveBaseActivity {
                         EMClient.getInstance()
                                 .chatroomManager()
                                 .joinChatRoom(chatroomId, new EMValueCallBack<EMChatRoom>() {
-                                    @Override public void onSuccess(EMChatRoom emChatRoom) {
+                                    @Override
+                                    public void onSuccess(EMChatRoom emChatRoom) {
                                         chatroom = emChatRoom;
                                         addChatRoomChangeListener();
                                         onMessageListInit();
                                     }
 
-                                    @Override public void onError(int i, String s) {
+                                    @Override
+                                    public void onError(int i, String s) {
                                         showToast("加入聊天室失败");
                                     }
                                 });
@@ -225,7 +252,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
                     }
                 }
 
-                @Override public void onAnimationRepeat(Animation animation) {
+                @Override
+                public void onAnimationRepeat(Animation animation) {
 
                 }
             });
@@ -237,14 +265,16 @@ public class LiveAnchorActivity extends LiveBaseActivity {
         }
     }
 
-    @Override protected void onPause() {
+    @Override
+    protected void onPause() {
         super.onPause();
         //mEasyStreaming.onPause();
         cameraView.onPause();
         stopPreview();
     }
 
-    @Override protected void onResume() {
+    @Override
+    protected void onResume() {
         super.onResume();
         //mEasyStreaming.onResume();
         startPreview();
@@ -257,7 +287,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
         EMClient.getInstance().chatManager().addMessageListener(msgListener);
     }
 
-    @Override public void onStop() {
+    @Override
+    public void onStop() {
         super.onStop();
         //stopPreview();
 
@@ -269,7 +300,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
         EaseUI.getInstance().popActivity(this);
     }
 
-    @Override protected void onDestroy() {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
         //mEasyStreaming.onDestroy();
         cameraView.release();
@@ -282,7 +314,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
         EMClient.getInstance().chatroomManager().leaveChatRoom(chatroomId);
 
         executeRunnable(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 try {
                     ApiManager.get().terminateLiveRoom(liveId);
                 } catch (LiveException e) {
@@ -294,10 +327,12 @@ public class LiveAnchorActivity extends LiveBaseActivity {
 
     UStreamStateListener mStreamStateListener = new UStreamStateListener() {
         //stream state
-        @Override public void onStateChanged(UStreamStateListener.State state, Object o) {
+        @Override
+        public void onStateChanged(State state, Object o) {
         }
 
-        @Override public void onStreamError(UStreamStateListener.Error error, Object extra) {
+        @Override
+        public void onStreamError(Error error, Object extra) {
             switch (error) {
                 case IOERROR:
                     if (isStarted && cameraView.isPreviewed()) {
@@ -309,7 +344,8 @@ public class LiveAnchorActivity extends LiveBaseActivity {
     };
 
     UNetworkListener mNetworkListener = new UNetworkListener() {
-        @Override public void onNetworkStateChanged(State state, Object o) {
+        @Override
+        public void onNetworkStateChanged(State state, Object o) {
             switch (state) {
                 case NETWORK_SPEED:
                     break;
@@ -328,4 +364,11 @@ public class LiveAnchorActivity extends LiveBaseActivity {
             }
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

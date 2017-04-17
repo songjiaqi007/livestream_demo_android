@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.ucai.live.data.DBManager;
 import cn.ucai.live.data.UserProfileManager;
 import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.data.model.IUserModel;

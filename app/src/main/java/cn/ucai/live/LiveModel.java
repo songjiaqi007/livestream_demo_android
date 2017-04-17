@@ -5,7 +5,6 @@ import android.content.Context;
 import java.util.List;
 import java.util.Map;
 
-import cn.ucai.live.data.local.GiftDao;
 import cn.ucai.live.data.model.Gift;
 import cn.ucai.live.utils.PreferenceManager;
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cn.ucai.live.widget.EaseImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.hyphenate.easeui.widget.EaseImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/item_small_avatar_size"
     android:layout_height="@dimen/item_small_avatar_size"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,4 +10,4 @@
     app:ease_shape_type="round"
     >
 
-</cn.ucai.live.widget.EaseImageView>
+</com.hyphenate.easeui.widget.EaseImageView>

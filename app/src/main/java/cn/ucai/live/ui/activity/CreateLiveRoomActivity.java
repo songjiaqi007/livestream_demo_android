@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,7 +120,12 @@ public class CreateLiveRoomActivity extends BaseActivity {
                 if(exception != null){
                     throw exception;
                 }
-                return ApiManager.get().createLiveRoom(name, desc, coverUrl);
+                try {
+                    return ApiManager.get().createLiveRoom(name, desc, coverUrl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
             }
 
             @Override public void onSuccess(LiveRoom liveRoom) {

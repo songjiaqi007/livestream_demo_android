@@ -28,6 +28,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -150,6 +151,22 @@ public class ApiManager {
     public String createLiveRoom(String name,String description) throws IOException {
         return createLiveRoom("1IFgE",name,description,EMClient.getInstance().getCurrentUser(),300,
                 EMClient.getInstance().getCurrentUser());
+    }
+
+    public void deleteLiveRoom(String chatRoomId){
+        Call<String> call = liveService.deleteLiveRoom("1IFgE", chatRoomId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                boolean deleteSuccess = ResultUtils.getEMResultWithSuccessFromJson(response.body());
+                L.e(TAG,"deleteLiveRoom,deleteSuccess="+deleteSuccess);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                L.e(TAG,"deleteLiveRoom,onFailure="+t.toString());
+            }
+        });
     }
 
 

@@ -132,6 +132,7 @@ public class ResultUtils {
                 JSONObject data = jsonObject.getJSONObject("data");
                 if (!data.isNull("success")) {
                     return data.getBoolean("success");
+
                 }
             }
             return false;

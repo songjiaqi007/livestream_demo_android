@@ -1,17 +1,5 @@
 package com.hyphenate.easeui.widget;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMConversation;
-import com.hyphenate.chat.EMMessage;
-import com.hyphenate.easeui.R;
-import com.hyphenate.easeui.adapter.EaseConversationAdapater;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
@@ -19,6 +7,18 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.widget.ListView;
+
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMMessage;
+import com.hyphenate.easeui.R;
+import com.hyphenate.easeui.adapter.EaseConversationAdapater;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public class EaseConversationList extends ListView {
     

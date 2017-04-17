@@ -3,7 +3,8 @@ package cn.ucai.live.ui.widget;
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
-import com.easemob.livedemo.R;
+
+import cn.ucai.live.R;
 
 /**
  * Created by wei on 2017/3/13.

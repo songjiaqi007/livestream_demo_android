@@ -16,4 +16,9 @@ public class AVOption {
     public int videoFilterMode = StreamProfileUtil.AVOptionsHolder.DefaultVideoRenderMode;
     public int cameraIndex = StreamProfileUtil.AVOptionsHolder.DefaultCameraIndex;
     public String streamUrl = "rtmp://publish3.cdn.ucloud.com.cn/ucloud/demo";
+
+    //    rtmp://publish3.cdn.ucloud.com.cn/ucloud/easemob-demo_chatdemoui_1346_1
+
+    public static String playUrl = "rtmp://vlive3.rtmp.cdn.ucloud.com.cn/ucloud/superwechat201612";
+    public static String pushUrl = "rtmp://publish3.cdn.ucloud.com.cn/ucloud/superwechat201612";
 }

@@ -16,6 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hyphenate.chat.EMChatRoom;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMPageResult;
 import com.hyphenate.exceptions.HyphenateException;
 
 import java.util.ArrayList;
@@ -29,11 +32,13 @@ import cn.ucai.live.data.model.LiveRoom;
 import cn.ucai.live.data.restapi.ApiManager;
 import cn.ucai.live.data.restapi.model.ResponseModule;
 import cn.ucai.live.ui.GridMarginDecoration;
+import cn.ucai.live.utils.L;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class LiveListFragment extends Fragment {
+    private static final String TAG = "LiveListFragment";
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private ProgressBar loadmorePB;
@@ -83,6 +88,9 @@ public class LiveListFragment extends Fragment {
     }
 
     private void showLiveList(final boolean isLoadMore){
+        if (getChatRoom()){
+            return;
+        }
         if(!isLoadMore)
             swipeRefreshLayout.setRefreshing(true);
         else
@@ -124,6 +132,63 @@ public class LiveListFragment extends Fragment {
                 hideLoadingView(isLoadMore);
             }
         });
+    }
+
+    private boolean getChatRoom() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int pageCount = -1;
+                final EMPageResult<EMChatRoom> result;
+                try {
+                    result = EMClient.getInstance().chatroomManager()
+                            .fetchPublicChatRoomsFromServer(0, 20);
+                    //get chat room list
+                    final List<EMChatRoom> chatRooms = result.getData();
+                    pageCount = result.getPageCount();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            L.e(TAG,"getChatRoom,chatRooms="+chatRooms);
+                            if (chatRooms!=null && chatRooms.size()>0){
+                                L.e(TAG,"getChatRoom,size="+chatRooms.size());
+                                for (EMChatRoom room : chatRooms) {
+                                    L.e(TAG,"room="+room.getName());
+                                    LiveRoom liveRoom = chatRoom3liveRoom(room);
+                                    if (liveRoom!=null){
+                                        liveRoomList.add(liveRoom);
+                                    }
+                                }
+                                if(adapter == null){
+                                    adapter = new PhotoAdapter(getActivity(), liveRoomList);
+                                    recyclerView.setAdapter(adapter);
+                                }else{
+                                    adapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+                    });
+
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        return true;
+    }
+
+    private LiveRoom chatRoom3liveRoom(EMChatRoom room) {
+        LiveRoom liveRoom = null;
+        if (room!=null){
+            liveRoom = new LiveRoom();
+            liveRoom.setId(room.getOwner());
+            liveRoom.setChatroomId(room.getId());
+            liveRoom.setName(room.getName());
+            liveRoom.setDescription(room.getDescription());
+            liveRoom.setAnchorId(room.getOwner());
+            liveRoom.setAudienceNum(room.getMemberCount());
+        }
+        return liveRoom;
     }
 
     private void hideLoadingView(boolean isLoadMore){

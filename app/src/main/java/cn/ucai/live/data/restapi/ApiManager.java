@@ -33,6 +33,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import retrofit2.http.HEAD;
 
 /**
  * Created by wei on 2017/2/14.
@@ -150,7 +151,7 @@ public class ApiManager {
 
     public String createLiveRoom(String name,String description) throws IOException {
         return createLiveRoom("1IFgE",name,description,EMClient.getInstance().getCurrentUser(),300,
-                EMClient.getInstance().getCurrentUser()+",fffire,seven009,zhu123456,cccccg,qwer000,gsd123,xsh123");
+                EMClient.getInstance().getCurrentUser());
     }
 
     public void deleteLiveRoom(String chatRoomId){
@@ -214,6 +215,7 @@ public class ApiManager {
         liveRoom.setCover(coverUrl);
 
         String id = createLiveRoom(name, description);
+
         L.e(TAG,"id="+id);
         if (id!=null){
             liveRoom.setId(id);

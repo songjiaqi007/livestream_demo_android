@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMChatRoomManager;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.utils.EaseUserUtils;
+import com.hyphenate.easeui.widget.EaseImageView;
 import com.hyphenate.exceptions.HyphenateException;
 
 import java.util.ArrayList;
@@ -137,11 +139,12 @@ public class RoomUserManagementFragment extends Fragment {
         @Override public void onBindViewHolder(ManagementViewHolder holder, final int position) {
             final String username = userList.get(position);
             holder.usernickView.setText(username);
+            EaseUserUtils.setAppUserAvatar(context,username,holder.useravatarView);
             switch (type) {
                 case ADMIN:
                     EMChatRoom chatRoom = chatRoomManager.getChatRoom(chatroomId);
                     if(chatRoom.getAdminList().contains(EMClient.getInstance().getCurrentUser())){
-                       holder.managerButton.setVisibility(View.INVISIBLE);
+                        holder.managerButton.setVisibility(View.INVISIBLE);
                     }else {
                         holder.managerButton.setVisibility(View.VISIBLE);
                         holder.managerButton.setText("移除房管");
@@ -192,6 +195,7 @@ public class RoomUserManagementFragment extends Fragment {
     static class ManagementViewHolder extends RecyclerView.ViewHolder{
         @BindView(R.id.txt_usernick) TextView usernickView;
         @BindView(R.id.btn_manager) TextView managerButton;
+        @BindView(R.id.img_avatar) EaseImageView useravatarView;
 
         public ManagementViewHolder(View itemView) {
             super(itemView);

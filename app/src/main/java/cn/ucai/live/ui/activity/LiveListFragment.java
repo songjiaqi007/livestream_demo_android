@@ -125,8 +125,6 @@ public class LiveListFragment extends Fragment {
             }
         });
     }
-
-
     private void hideLoadingView(boolean isLoadMore){
         isLoading = false;
         if(!isLoadMore)

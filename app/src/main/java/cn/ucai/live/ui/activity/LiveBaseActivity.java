@@ -32,6 +32,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.ucai.live.I;
 import cn.ucai.live.LiveConstants;
 import cn.ucai.live.R;
 import cn.ucai.live.ThreadPoolManager;
@@ -43,6 +44,7 @@ import cn.ucai.live.data.restapi.model.StatisticsType;
 import cn.ucai.live.ui.widget.PeriscopeLayout;
 import cn.ucai.live.ui.widget.RoomMessagesView;
 import cn.ucai.live.utils.L;
+import cn.ucai.live.utils.PreferenceManager;
 import cn.ucai.live.utils.Utils;
 
 /**
@@ -65,8 +67,8 @@ public abstract class LiveBaseActivity extends BaseActivity {
     //@BindView(R.id.new_messages_warn) ImageView newMsgNotifyImage;
 
     @BindView(R.id.user_manager_image) ImageView userManagerView;
-    @BindView(R.id.gift_image) ImageView giftImageView;
     @BindView(R.id.switch_camera_image) ImageView switchCameraView;
+    @BindView(R.id.gift_image) ImageView giftImageView;
     @BindView(R.id.like_image) ImageView likeImageView;
     @BindView(R.id.txt_live_id) TextView liveIdView;
     @BindView(R.id.tv_username) TextView usernameView;
@@ -310,6 +312,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
                         //    barrageLayout.addBarrage(content,
                         //            EMClient.getInstance().getCurrentUser());
                         //}
+                        message.setAttribute(I.User.NICK, PreferenceManager.getInstance().getCurrentUserNick());
                         message.setChatType(EMMessage.ChatType.ChatRoom);
                         EMClient.getInstance().chatManager().sendMessage(message);
                         message.setMessageStatusCallback(new EMCallBack() {
@@ -370,8 +373,8 @@ public abstract class LiveBaseActivity extends BaseActivity {
     }
 
     private void showUserDetailsDialog(String username) {
-        final GiftListDetailsDialog dialog = GiftListDetailsDialog.newInstance(username, liveRoom);
-        dialog.setManageEventListener(new GiftListDetailsDialog.RoomManageEventListener() {
+        final RoomUserDetailsDialog dialog = RoomUserDetailsDialog.newInstance(username, liveRoom);
+        dialog.setManageEventListener(new RoomUserDetailsDialog.RoomManageEventListener() {
             @Override public void onKickMember(String username) {
                 onRoomMemberExited(username);
                 dialog.dismiss();
@@ -382,22 +385,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
                 dialog.dismiss();
             }
         });
-        dialog.show(getSupportFragmentManager(), "GiftListDetailsDialog");
-    }
-    private void showGiftDetailsDialog(String username) {
-        final GiftListDetailsDialog dialog = GiftListDetailsDialog.newInstance(username, liveRoom);
-        dialog.setManageEventListener(new GiftListDetailsDialog.RoomManageEventListener() {
-            @Override public void onKickMember(String username) {
-                onRoomMemberExited(username);
-                dialog.dismiss();
-            }
-
-            @Override public void onAddBlacklist(String username) {
-                onRoomMemberExited(username);
-                dialog.dismiss();
-            }
-        });
-        dialog.show(getSupportFragmentManager(), "GiftListDetailsDialog");
+        dialog.show(getSupportFragmentManager(), "RoomUserDetailsDialog");
     }
 
     private void showInputView() {
@@ -533,7 +521,7 @@ public abstract class LiveBaseActivity extends BaseActivity {
         managementDialog.show(getSupportFragmentManager(), "RoomUserManagementDialog");
     }
 
-    @OnClick(R.id.gift_image) void giftList() {
+    @OnClick(R.id.gift_image) void showGiftList(){
         RoomUserManagementDialog managementDialog = new RoomUserManagementDialog(chatroomId);
         managementDialog.show(getSupportFragmentManager(), "RoomUserManagementDialog");
     }

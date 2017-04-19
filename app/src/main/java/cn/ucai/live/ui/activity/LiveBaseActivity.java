@@ -522,8 +522,19 @@ public abstract class LiveBaseActivity extends BaseActivity {
     }
 
     @OnClick(R.id.gift_image) void showGiftList(){
-        RoomUserManagementDialog managementDialog = new RoomUserManagementDialog(chatroomId);
-        managementDialog.show(getSupportFragmentManager(), "RoomUserManagementDialog");
+        final GiftListDialog dialog = GiftListDialog.newInstance();
+//        dialog.setManageEventListener(new RoomUserDetailsDialog.RoomManageEventListener() {
+//            @Override public void onKickMember(String username) {
+//                onRoomMemberExited(username);
+//                dialog.dismiss();
+//            }
+//
+//            @Override public void onAddBlacklist(String username) {
+//                onRoomMemberExited(username);
+//                dialog.dismiss();
+//            }
+//        });
+        dialog.show(getSupportFragmentManager(), "GiftListDialog");
     }
 
     //@OnClick(R.id.present_image) void onPresentImageClick() {

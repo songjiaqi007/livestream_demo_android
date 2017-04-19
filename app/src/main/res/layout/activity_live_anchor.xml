@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.easemob.livedemo.cn.easemob.livedemo.ui.activity.LiveAnchorActivity"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/root_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="cn.ucai.live.ui.activity.LiveAnchorActivity"
     >
     <RelativeLayout
         android:id="@+id/live_container"
@@ -70,22 +70,22 @@
             android:layout_marginBottom="42dp"
             />
 
-        <!--  <LiveLeftGiftView
-              android:id="@+id/left_gift_view1"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_above="@+id/left_gift_view2"
-              android:layout_marginBottom="4dp"
-              android:visibility="invisible"
-              />
-          <LiveLeftGiftView
-              android:id="@+id/left_gift_view2"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_centerVertical="true"
-              android:layout_marginBottom="5dp"
-              android:visibility="invisible"
-              />-->
+        <cn.ucai.live.ui.widget.LiveLeftGiftView
+            android:id="@+id/left_gift_view1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/left_gift_view2"
+            android:layout_marginBottom="4dp"
+            android:visibility="invisible"
+            />
+        <cn.ucai.live.ui.widget.LiveLeftGiftView
+            android:id="@+id/left_gift_view2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:visibility="invisible"
+            />
 
         <include
             layout="@layout/layout_live_bottom_bar"
